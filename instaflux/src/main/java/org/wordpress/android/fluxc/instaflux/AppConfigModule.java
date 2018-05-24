@@ -12,7 +12,7 @@ import dagger.Module;
 import dagger.Provides;
 
 @Module
-public class AppSecretsModule {
+public class AppConfigModule {
     public String getStringBuildConfigValue(String fieldName) {
         try {
             String packageName = getClass().getPackage().getName();
