@@ -37,13 +37,7 @@ pluginManagement {
     }
 }
 
-include ':fluxc',
-        ':fluxc-processor',
-        ':fluxc-annotations',
-        ':plugins:woocommerce',
-        ':example',
-        ':instaflux',
-        ':tests:api'
+include ':instaflux'
 
 // Build cache is only enabled for CI, at least for now
 if (System.getenv().containsKey("CI")) {
