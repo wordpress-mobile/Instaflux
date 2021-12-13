@@ -33,7 +33,10 @@ android {
 
 android.buildTypes.all { buildType ->
     // Add properties named "wp.xxx" to our BuildConfig
-    project.properties.any { property ->
+    Properties apiProperties = loadPropertiesOrUseExampleProperties("api.properties",
+            "example app can't access WordPress.com servers")
+
+    apiProperties.any { property ->
         if (property.key.toLowerCase().startsWith("wp.")) {
             buildType.buildConfigField "String", property.key.replace("wp.", "").replace(".", "_").toUpperCase(),
                     "\"${property.value}\""
@@ -41,8 +44,29 @@ android.buildTypes.all { buildType ->
     }
 }
 
+def loadPropertiesOrUseExampleProperties(fileName, warningDetail) {
+    Properties properties = new Properties()
+    File propertiesFile = file(propertiesFilePath(fileName))
+    if (propertiesFile.exists()) {
+        properties.load(new InputStreamReader(new FileInputStream(propertiesFile), "utf-8"))
+    } else {
+        def examplePropertiesFilePath = examplePropertiesFilePath(fileName)
+        logger.quiet("WARNING: you're using the '$examplePropertiesFilePath' file - $warningDetail")
+        properties.load(new InputStreamReader(new FileInputStream(file(examplePropertiesFilePath)), "utf-8"))
+    }
+    return properties
+}
+
+static def propertiesFilePath(fileName) {
+    return "../example/properties/$fileName"
+}
+
+static def examplePropertiesFilePath(fileName) {
+    return "../example/properties-example/$fileName"
+}
+
 dependencies {
-    implementation project(':fluxc');
+    implementation("org.wordpress:fluxc:develop-e490ac0557848d32e28781e7f8fca4923e587a98")
 
     // WordPress libs
     implementation("org.wordpress:utils:$wordPressUtilsVersion") {
